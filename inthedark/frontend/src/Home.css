@@ -1,0 +1,29 @@
+.Title {
+  text-align: center;
+  font-size: 10vh;
+  opacity: 0;
+  transform: translate(0,-1em);
+  transition: 1s ease-in-out;
+}
+.Title.loaded {
+  opacity: 1;
+  transform: translate(0,0);
+}
+.JoinChatButtons {
+  opacity: 0;
+  transform: translate(0,-2em);
+  transition: 2s ease-in-out;
+}
+.JoinChatButtons.loaded {
+  opacity: 1;
+  transform: translate(0,0);
+}
+
+.BtnFloatRight {
+  float: right;
+}
+
+.HomeCenter {
+  position: relative;
+  top: 35vh;
+}

@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import Home from './Home';
 import './index.css';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const API_URL = "http://localhost:8000/api/server/";
 ReactDOM.render(
-  <App />,
+  <Home />,
   document.getElementById('root')
 );
