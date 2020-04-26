@@ -19,11 +19,31 @@
   transform: translate(0,0);
 }
 
-.BtnFloatRight {
+.createRoomBtn {
   float: right;
+}
+.createRoomBtn:hover {
+  transform: scale(1.1,1.1);
+  transition: 0.5s ease-in-out;
+}
+.joinRoomBtn {
+  transition: 0.5s ease-in-out;
+}
+.joinRoomBtn:hover {
+  transform: scale(1.1,1.1);
+  transition: 0.5s ease-in-out;
 }
 
 .HomeCenter {
   position: relative;
   top: 35vh;
+}
+.InputBox {
+  width: 50%;
+  opacity: 1;
+  margin: auto;
+}
+
+.rowGap {
+  height:4vh;
 }
