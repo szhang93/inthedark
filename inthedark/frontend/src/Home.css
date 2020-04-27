@@ -9,6 +9,15 @@
   opacity: 1;
   transform: translate(0,0);
 }
+.Description {
+  text-align: center;
+  color: gray;
+  margin-top: 0;
+  margin-bottom:0;
+}
+.bottomMargin {
+  margin-bottom: 2vh;
+}
 .JoinChatButtons {
   opacity: 0;
   transform: translate(0,-2em);
@@ -36,7 +45,7 @@
 
 .HomeCenter {
   position: relative;
-  top: 35vh;
+  top: 30vh;
 }
 .InputBox {
   width: 50%;
