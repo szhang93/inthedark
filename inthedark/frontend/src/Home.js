@@ -42,7 +42,7 @@ class Input extends Component {
   }
   // Returns whether string is alphanumeric
   isInputValid(string) {
-    var pattern = /^(\d*\w*-*_*)+$/i
+    var pattern = /^(\d*\w*-*_* *)+$/i
     return (pattern.test(string))
   }
   submitClicked() {
@@ -131,8 +131,8 @@ class Input extends Component {
     else{
       this.setState({
         inputText: "",
-        alertMsg: "Names can only include alphanumeric, '-', '_'. \
-        No spaces or special characters are allowed.",
+        alertMsg: "Names can only include alphanumeric, '-', '_', ' '. \
+        No special characters are allowed.",
         alertShow: true
       })
     }
@@ -173,7 +173,7 @@ class Input extends Component {
               onChange={this.inputChanged}
             />
             <InputGroup.Append>
-              <Button variant="outline-dark"
+              <Button variant="dark"
               ref={this.btnSubmit}
               onClick={this.submitClicked}
               type="submit"
@@ -226,7 +226,7 @@ class JoinChatButtons extends Component {
           </Col>
           <Col>
             <Button id="JoinBtn"
-            variant="info"
+            variant="outline-dark"
             size="lg"
             className="joinRoomBtn"
             onClick={()=>this.btnPress(btnState.JOIN)}

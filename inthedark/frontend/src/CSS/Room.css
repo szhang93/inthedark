@@ -27,6 +27,11 @@
   opacity: 1;
   transform: translate(0,0);
 }
+.modal {
+  opacity: 1;
+  transform: translate(0,10em);
+  transition: 1s ease-in-out;
+}
 .backGround {
   width: 100%;
   height: 100%;
@@ -38,10 +43,4 @@
 }
 .textArea {
   width: 90%;
-}
-.sendButton {
-  width: 10%;
-}
-.bubbleArea {
-  height: 90%;
 }

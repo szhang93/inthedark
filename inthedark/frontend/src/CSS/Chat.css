@@ -1,0 +1,30 @@
+.sendButton {
+  width: 10%;
+}
+.bubbleArea {
+  height: 90%;
+}
+.scrollArea {
+  overflow-y: scroll;
+  width: 100%;
+  max-height: 50vh;
+}
+
+.bubbleBundle {
+
+}
+.userAlias {
+  text-align: right;
+}
+.bubble {
+  display: flex;
+}
+.timeStamp {
+  text-align: right;
+}
+
+.userCount {
+  font-size: 2.5vh;
+  color: #23272b;
+  text-align: center;
+}

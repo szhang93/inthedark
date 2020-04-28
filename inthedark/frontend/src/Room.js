@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Chat from './Chat'
 import axios from "axios";
 import {API_URL} from './utils/API'
 // CSS, BOOTSTRAP and ADDONS
@@ -13,49 +14,22 @@ import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
 
-class Chat extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      inputRows: 1
-    }
-  }
-  render () {
-    return(
-      <Container className="chatPanel">
-        <Row className="bubbleArea">
-          <Col>
 
-          </Col>
-        </Row>
-        <Row className="justify-content-md-center" md="auto">
-          <Col className="textArea">
-            <InputGroup>
-              <FormControl rows={this.state.inputRows} size="lg">
-              </FormControl>
-              <InputGroup.Append>
-              <Button variant="dark" size="lg">
-                Send
-              </Button>
-              </InputGroup.Append>
-            </InputGroup>
-          </Col>
-        </Row>
-      </Container>
-    )
-  }
-}
 
 class SetAlias extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      show: this.props.show
+      show: this.props.show,
+      inputText: "",
+      alertMsg: "",
+      alertShow: false
     }
     this.inputBox = React.createRef()
     this.btnSubmit = React.createRef()
     this.checkEnter = this.checkEnter.bind(this)
     this.submitClicked = this.submitClicked.bind(this)
+    this.inputChanged = this.inputChanged.bind(this)
   }
   componentDidMount() {
     this.inputBox.current.select()
@@ -63,6 +37,28 @@ class SetAlias extends Component {
   checkEnter(e) {
     if(e.key == "Enter"){
       this.btnSubmit.current.click()
+    }
+  }
+  // Returns whether string is alphanumeric
+  isInputValid(string) {
+    var pattern = /^(\d*\w*-*_* *)+$/i
+    return (pattern.test(string))
+  }
+  // When input is changed, checks whether input is valid. Otherwise, show alert.
+  inputChanged(e) {
+    if(this.isInputValid(e.target.value)){
+      this.setState({
+        inputText: e.target.value,
+        alertShow: false
+      })
+    }
+    else{
+      this.setState({
+        inputText: "",
+        alertMsg: "Names can only include alphanumeric, '-', '_', ' '. \
+        No special characters are allowed.",
+        alertShow: true
+      })
     }
   }
   submitClicked() {
@@ -79,12 +75,16 @@ class SetAlias extends Component {
           <Modal.Title>Welcome to {this.props.roomName}.</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <Alert variant="danger" show={this.state.alertShow}>
+            {this.state.alertMsg}
+          </Alert>
           <InputGroup>
             <FormControl
               ref={this.inputBox}
               size="lg"
               onKeyPress={this.checkEnter}
               placeholder={"Alias"}
+              onChange={this.inputChanged}
             />
             <InputGroup.Append>
               <Button variant="dark"
@@ -106,7 +106,7 @@ class Room extends Component {
     this.state = {
       roomName: this.props.match.params.session,
       userId: null,
-      showSetAlias: false,
+      showSetAlias: true,
       alias: ""
     }
     this.chat = React.createRef()
@@ -152,7 +152,9 @@ class Room extends Component {
         {this.state.showSetAlias ?
         <SetAlias show={this.state.showSetAlias}
           setAlias={this.setAlias.bind(this)}
-          roomName={this.state.roomName}/>
+          roomName={this.state.roomName}
+          className="modal"
+          ref={this.modal}/>
           :<></>}
         <Container className="fullScreen">
         <Row>
