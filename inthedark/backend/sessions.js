@@ -24,7 +24,7 @@ exports.createSession = (req, res) => {
    // session_id exists already. Return status 200.
    if (result[0].count > 0) {
      console.log("session_id ", session_id, " already exists.")
-     res.status(200).json({"success":false, "user_id":null})
+     res.status(200).json({"success":false})
    }
    else {
      var query = `INSERT INTO sessions (session_id)
@@ -35,26 +35,7 @@ exports.createSession = (req, res) => {
           res.status(500).end()
         }
         console.log("Inserted new session into db")
-
-         query = `INSERT INTO users (session_id)
-         VALUES ('${session_id}')`
-         db.query(query, (err, result) => {
-           if (err) {
-             console.log(err)
-             res.status(500).end()
-           }
-           console.log("Inserted new user into db")
-
-           query = `SELECT lAST_INSERT_ID() AS user_id`
-           db.query(query, (err, result) => {
-             if (err) {
-               console.log(err)
-               res.status(500).end()
-             }
-             console.log("Retrieved last inserted id: ", result[0].user_id)
-             res.status(200).json({"success":true, "user_id":result[0].user_id})
-           })
-         })
+        res.status(200).json({"success":true})
       })
     }
   })
@@ -78,14 +59,13 @@ exports.setUserAlias = (req, res) => {
     res.status(400).end()
     return
   }
-  // This does not check whether user exists.
+  // This does not check whether user exists. User is assumed to exist.
   db.query(query, (err, result) => {
     if (err) {
       console.log(err)
       res.status(500).end()
     }
     else{
-      // Note: This doesn't check whether user exists.
       console.log("Succesfully set user ", user_id, " with alias ", user_alias)
       res.status(200).json({"success":true, "user_alias":user_alias})
     }
@@ -117,3 +97,26 @@ exports.sessionExists = (req, res) => {
     }
   })
 }
+
+/*
+//CREATE USER
+query = `INSERT INTO users (session_id)
+VALUES ('${session_id}')`
+db.query(query, (err, result) => {
+  if (err) {
+    console.log(err)
+    res.status(500).end()
+  }
+  console.log("Inserted new user into db")
+
+  query = `SELECT lAST_INSERT_ID() AS user_id`
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      res.status(500).end()
+    }
+    console.log("Retrieved last inserted id: ", result[0].user_id)
+    res.status(200).json({"success":true, "user_id":result[0].user_id})
+  })
+})
+*/
