@@ -1,7 +1,10 @@
 // REACT
 import React, { Component } from 'react';
+import axios from "axios";
+import {API_URL} from './utils/API'
+import { Redirect } from "react-router-dom";
 // CSS, BOOTSTRAP and ADDONS
-import './Home.css';
+import './CSS/Home.css';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -9,13 +12,11 @@ import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
-// REFERENCES
-//https://stackoverflow.com/questions/6805482/css3-transition-animation-on-load
-import API from './utils/API';
+
 
 const btnState = {NONE:0, CREATE:1, JOIN:2}
 
-class InputChatName extends Component {
+class Input extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -54,11 +55,68 @@ class InputChatName extends Component {
       return
     }
     else{
-      if(this.props.type == btnState.CREATE){
-
-      }
-      else if(this.props.type == btnState.JOIN){
-
+      // If we are creating a room
+      if (this.props.type == btnState.CREATE) {
+        // If we are creating a new room, the session name must not exist
+        console.log(API_URL + `/session`)
+        axios.post(API_URL + `/session`, {
+          "session_id": this.state.inputText
+        })
+        .then((res) => {
+          if (res.status != 200) {
+            console.log("Response status not 200.")
+            return
+          }
+          var nameExists = !res.data.success
+          var userId = res.data.user_id
+          var sessionId = this.state.inputText
+          if (nameExists) {
+            this.setState({
+              inputText: "",
+              alertMsg: "A room with this name already exists.",
+              alertShow: true
+            })
+          }
+          else {
+            console.log("Name is free to use")
+            this.btnSubmit.current.setAttribute("disabled", "disabled")
+            // Nagivate to Room page
+            this.setState({"redirect": sessionId})
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      } // If we are joining a room
+      else if (this.props.type == btnState.JOIN) {
+        // If we want to join a room, the session name must already exist
+        // Check if session name already exists
+        console.log(API_URL + `/session_exists?session_id=${this.state.inputText}`)
+        axios.get(API_URL + `/session_exists?session_id=${this.state.inputText}`)
+          .then((res) => {
+            if (res.status != 200) {
+              console.log("Response status not 200.")
+              return
+            }
+            var nameExists = res.data.success
+            var sessionId = this.state.inputText
+            if (!nameExists) {
+              this.setState({
+                inputText: "",
+                alertMsg: "This room you are trying to join does not exist.",
+                alertShow: true
+              })
+            }
+            else {
+              console.log("Joining Room")
+              this.btnSubmit.current.setAttribute("disabled", "disabled")
+              // Nagivate to Room page
+              this.setState({"redirect": sessionId})
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
       }
     }
   }
@@ -85,6 +143,8 @@ class InputChatName extends Component {
     if(this.props != newProps){
       if(newProps.type == btnState.CREATE || newProps.type == btnState.JOIN){
         this.inputBox.current.select()
+        this.inputBox.current.value = ""
+        this.setState({"inputText": ""})
       }
     }
   }
@@ -93,6 +153,9 @@ class InputChatName extends Component {
     this.inputBox.current.select()
   }
   render() {
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />
+    }
     return(
       <>
         <div>
@@ -140,10 +203,10 @@ class JoinChatButtons extends Component {
   // Checks which button is pressed, and passes appropriate props
   genInputBox(){
     if(this.state.btnPressed == btnState.CREATE){
-      return <InputChatName type={btnState.CREATE}/>
+      return <Input type={btnState.CREATE}/>
     }
     else if(this.state.btnPressed == btnState.JOIN){
-      return <InputChatName type={btnState.JOIN}/>
+      return <Input type={btnState.JOIN}/>
     }
     else{
       return <></>
