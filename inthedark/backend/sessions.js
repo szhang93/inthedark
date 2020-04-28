@@ -45,10 +45,8 @@ exports.setUserAlias = (req, res) => {
   console.log("------------calling setUserAlias--------------------")
   user_id = req.body.user_id
   user_alias = req.body.user_alias
-  var query = `UPDATE users
-  SET user_alias = '${user_alias}'
-  WHERE user_id = ${user_id}`
-  console.log("Attempting to set user ", user_id, " with alias ", user_alias)
+  session_id = req.body.session_id
+
   if(user_id == undefined) {
     console.log("user_id ", user_id, " is undefined.")
     res.status(400).end()
@@ -59,15 +57,36 @@ exports.setUserAlias = (req, res) => {
     res.status(400).end()
     return
   }
-  // This does not check whether user exists. User is assumed to exist.
+  var query = `SELECT COUNT(*) AS count FROM users JOIN sessions
+  ON users.session_id = sessions.session_id AND users.session_id = '${session_id}'
+  AND users.user_alias = '${user_alias}'`
+  console.log("Checking if user_alias ", user_alias, " is unique in session ", session_id)
   db.query(query, (err, result) => {
     if (err) {
       console.log(err)
       res.status(500).end()
     }
-    else{
-      console.log("Succesfully set user ", user_id, " with alias ", user_alias)
-      res.status(200).json({"success":true, "user_alias":user_alias})
+    else {
+      if (result[0].count > 0) {
+        res.status(200).json({"success":false, "user_alias":null})
+      }
+      else {
+        // This does not check whether user exists. User is assumed to exist.
+        query = `UPDATE users
+        SET user_alias = '${user_alias}'
+        WHERE user_id = ${user_id}`
+        console.log("Attempting to set user ", user_id, " with alias ", user_alias)
+        db.query(query, (err, result) => {
+          if (err) {
+            console.log(err)
+            res.status(500).end()
+          }
+          else{
+            console.log("Succesfully set user ", user_id, " with alias ", user_alias)
+            res.status(200).json({"success":true, "user_alias":user_alias})
+          }
+        })
+      }
     }
   })
 }
