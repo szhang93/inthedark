@@ -17,12 +17,16 @@ app.use(bodyParser.urlencoded({extended: false}))
  * body: session_id [String] [Unique]
  * response: user_id [String] [Unique]
  */
-app.post('/create-session', sessions.createSession)
+app.post('/session', sessions.createSession)
 /*
  * body: user_id [String] [Unique]
  * body: user_alias [String]
  */
-app.post('/set-user-alias', sessions.setUserAlias)
+app.put('/user_alias', sessions.setUserAlias)
+/*
+ * query: session_id [String] [Unique]
+ */
+app.get('/session_exists', sessions.sessionExists)
 
 
 app.listen(port)
