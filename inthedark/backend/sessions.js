@@ -97,26 +97,26 @@ exports.sessionExists = (req, res) => {
     }
   })
 }
-
-/*
-//CREATE USER
-query = `INSERT INTO users (session_id)
-VALUES ('${session_id}')`
-db.query(query, (err, result) => {
-  if (err) {
-    console.log(err)
-    res.status(500).end()
-  }
-  console.log("Inserted new user into db")
-
-  query = `SELECT lAST_INSERT_ID() AS user_id`
+exports.createUser = (req, res) => {
+  //CREATE USER
+  session_id = req.query.session_id
+  query = `INSERT INTO users (session_id)
+  VALUES ('${session_id}')`
   db.query(query, (err, result) => {
     if (err) {
       console.log(err)
       res.status(500).end()
     }
-    console.log("Retrieved last inserted id: ", result[0].user_id)
-    res.status(200).json({"success":true, "user_id":result[0].user_id})
+    console.log("Inserted new user into db")
+
+    query = `SELECT lAST_INSERT_ID() AS user_id`
+    db.query(query, (err, result) => {
+      if (err) {
+        console.log(err)
+        res.status(500).end()
+      }
+      console.log("Retrieved last inserted id: ", result[0].user_id)
+      res.status(200).json({"success":true, "user_id":result[0].user_id})
+    })
   })
-})
-*/
+}

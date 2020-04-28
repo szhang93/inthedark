@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}))
 
 // Allow cross origin
-// Currently allows any origin. 
+// Currently allows any origin.
 app.use(cors())
 
 
@@ -21,7 +21,6 @@ app.use(cors())
 // ------------------------------------------------
 /*
  * body: session_id [String] [Unique]
- * response: user_id [String] [Unique]
  */
 app.post('/session', sessions.createSession)
 /*
@@ -33,6 +32,11 @@ app.put('/user_alias', sessions.setUserAlias)
  * query: session_id [String] [Unique]
  */
 app.get('/session_exists', sessions.sessionExists)
+/*
+ * query: session_id [String] [Unique]
+ * response: user_id [Unique] [Number]
+ */
+app.post('/user', sessions.createUser)
 
 
 app.listen(port)
