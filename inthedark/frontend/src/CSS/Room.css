@@ -6,12 +6,13 @@
 }
 .roomName {
   text-align: center;
-  font-size: 10vh;
+  font-size: 7vh;
   height: 30%;
   opacity: 0;
   transform: translate(0,-1em);
   transition: 1s ease-in-out;
   color: #343a40;
+  padding-bottom: 4vh;
 }
 .roomName.loaded {
   opacity: 1;

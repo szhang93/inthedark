@@ -20,6 +20,7 @@ exports.createSession = (req, res) => {
    if (err) {
      console.log(err)
      res.status(500).end()
+     return
    }
    // session_id exists already. Return status 200.
    if (result[0].count > 0) {
@@ -33,6 +34,7 @@ exports.createSession = (req, res) => {
         if (err) {
           console.log(err)
           res.status(500).end()
+          return
         }
         console.log("Inserted new session into db")
         res.status(200).json({"success":true})
@@ -105,6 +107,7 @@ exports.sessionExists = (req, res) => {
     if (err) {
       console.log(err)
       res.status(500).end()
+      return
     }
     if (result[0].count > 0) {
       console.log("Session exists")
@@ -125,6 +128,7 @@ exports.createUser = (req, res) => {
     if (err) {
       console.log(err)
       res.status(500).end()
+      return
     }
     console.log("Inserted new user into db")
 
@@ -133,6 +137,7 @@ exports.createUser = (req, res) => {
       if (err) {
         console.log(err)
         res.status(500).end()
+        return
       }
       console.log("Retrieved last inserted id: ", result[0].user_id)
       res.status(200).json({"success":true, "user_id":result[0].user_id})

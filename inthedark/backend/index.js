@@ -4,6 +4,7 @@ const express = require('express')
 var sessions = require('./sessions')
 var db = require('./db')
 var cors = require('cors')
+var socketIo = require('socket.io')
 
 // Port
 const port = process.env.PORT || 8080
@@ -14,7 +15,15 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 // Allow cross origin
 // Currently allows any origin.
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:3000",
+}))
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Credentials", "true")
+  next()
+})
+const server = http.createServer(app);
 
 
 // API endpoints
@@ -39,4 +48,17 @@ app.get('/session_exists', sessions.sessionExists)
 app.post('/user', sessions.createUser)
 
 
-app.listen(port)
+// Socket functions
+// ------------------------------------------------
+var io = socketIo(server)
+io.origins('*:*') // Allows cors
+io.on('connection', (socket) => {
+  console.log('a user connected');
+});
+
+
+
+
+
+
+server.listen(port)

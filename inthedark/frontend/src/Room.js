@@ -15,17 +15,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
 
-const colors = [
-  "#f54242", // Red
-  "#f59342", // Orange
-  "#f5d142", // Yellow
-  "#e0f542", // Neon
-  "#75f542", // Green
-  "#42f5d4", // Cyan
-  "#42c5f5", // Blue
-  "#e270ff", // Purple
-  "#ff78c4", // Pink
-]
+const maxNameLen = 100;
 
 class SetAlias extends Component {
   constructor(props) {
@@ -57,6 +47,9 @@ class SetAlias extends Component {
   }
   // When input is changed, checks whether input is valid. Otherwise, show alert.
   inputChanged(e) {
+    if (e.target.value.length > maxNameLen) {
+      this.inputBox.current.value = e.target.value.substring(0,maxNameLen)
+    }
     if(this.isInputValid(e.target.value)){
       this.setState({
         inputText: e.target.value,

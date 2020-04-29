@@ -12,6 +12,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import io from 'socket.io-client'
+
+
+
+const maxMessageLen = 200;
 const colors = [
   "#f54242", // Red
   "#f59342", // Orange
@@ -55,11 +60,15 @@ class Chat extends Component {
       users: 0,
       myColor: '#f54242'
     }
-    this.inputText = React.createRef()
+    this.inputBox = React.createRef()
     this.sendButton = React.createRef()
     this.chatEnd = React.createRef()
     this.sendMessage = this.sendMessage.bind(this)
     this.checkEnter = this.checkEnter.bind(this)
+    this.inputChanged = this.inputChanged.bind(this)
+
+    // Socket connect to backend
+    const sock = io.connect("http://127.0.0.1:8080", {reconnect: true})
   }
   bubbleList () {
     console.log(this.state.bubbles)
@@ -80,20 +89,25 @@ class Chat extends Component {
       this.sendButton.current.click()
     }
   }
+  inputChanged (e){
+    if (e.target.value.length > maxMessageLen) {
+      this.inputBox.current.value = e.target.value.substring(0,maxMessageLen)
+    }
+  }
   sendMessage () {
     // For now, append to bubble List
-    const text = this.inputText.current.value
+    const text = this.inputBox.current.value
     const newBubble = <Bubble userAlias="bob" text={text} timeStamp="10/19/2019" color={this.state.myColor}/>
     this.setState((prevState) => ({
       bubbles: [...prevState.bubbles, newBubble]
     }))
-    this.inputText.current.value = ""
+    this.inputBox.current.value = ""
   }
   componentDidUpdate () {
-    this.chatEnd.current.scrollIntoView({behavior: "smooth"})
+    this.chatEnd.current.scrollIntoView()
   }
   componentDidMount () {
-    this.inputText.current.select()
+    this.inputBox.current.select()
     // Choose random color for user.
     var myColorIdx = Math.floor(Math.random() * colors.length)
     console.log("Setting color to: ", colors[myColorIdx])
@@ -112,8 +126,9 @@ class Chat extends Component {
           <Col className="textArea">
             <InputGroup>
               <FormControl size="lg"
-                ref={this.inputText}
-                onKeyPress={this.checkEnter}>
+                ref={this.inputBox}
+                onKeyPress={this.checkEnter}
+                onChange={this.inputChanged}>
               </FormControl>
               <InputGroup.Append>
               <Button variant="dark"

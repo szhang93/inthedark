@@ -13,8 +13,12 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
 
+// Socket connect to backend
+import io from 'socket.io-client'
+const sock = io.connect("http://127.0.0.1:8080", {reconnect: true})
 
 const btnState = {NONE:0, CREATE:1, JOIN:2}
+const maxNameLen = 100;
 
 class Input extends Component {
   constructor(props){
@@ -122,6 +126,9 @@ class Input extends Component {
   }
   // When input is changed, checks whether input is valid. Otherwise, show alert.
   inputChanged(e) {
+    if (e.target.value.length > maxNameLen) {
+      this.inputBox.current.value = e.target.value.substring(0,maxNameLen)
+    }
     if(this.isInputValid(e.target.value)){
       this.setState({
         inputText: e.target.value,
