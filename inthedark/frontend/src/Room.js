@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Chat from './Chat'
 import axios from "axios";
 import {API_URL} from './utils/API'
+import { Redirect } from "react-router-dom";
 // CSS, BOOTSTRAP and ADDONS
 import './CSS/Room.css';
 
@@ -64,8 +65,33 @@ class SetAlias extends Component {
   submitClicked() {
     var nickName = this.inputBox.current.value
     if (nickName.length > 0) {
-      this.props.setAlias(nickName)
-      this.setState({show: false})
+      console.log("Attemping to set alias as: ", nickName)
+      console.log(API_URL + "/user_alias")
+      axios.put(API_URL + "/user_alias", {
+        session_id: this.props.roomName,
+        user_id: this.props.userId,
+        user_alias: nickName
+      })
+      .then((res) => {
+        if (res.status != 200) {
+          console.log("Response status not 200.")
+        }
+        else {
+          if (!res.data.success) {
+            this.setState({
+              alertMsg: "Someone else in this room already has this name.",
+              alertShow: true
+            })
+          }
+          else {
+            this.props.setAlias(nickName)
+            this.setState({show: false})
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     }
   }
   render() {
@@ -104,55 +130,84 @@ class Room extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      roomName: this.props.match.params.session,
       userId: null,
       showSetAlias: true,
-      alias: ""
+      alias: "",
+      loading: true
     }
     this.chat = React.createRef()
     this.roomNameTitle = React.createRef()
   }
   componentDidMount() {
-    // setTimeout is used here to apply the initial fade in transition
-    setTimeout(()=>{
-      this.chat.current.className += " loaded"
-      this.roomNameTitle.current.className += " loaded"
-    }, 0)
-    // Generate user
-    console.log(API_URL + `/user?session_id=${this.state.roomName}`)
-    axios.post(API_URL + `/user?session_id=${this.state.roomName}`)
-      .then((res) => {
-        if (res.status != 200) {
-          console.log("Response status not 200.")
-          return
+    // Check if sesion is valid
+    console.log(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
+    axios.get(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
+    .then((res) => {
+      if (res.status != 200) {
+        console.log("Response status not 200.")
+        return
+      }
+      else {
+        if (!res.data.success) {
+          // If sesssion doesn't exist, redirect to home page
+          console.log("session doesn't exist")
+          this.setState({redirect: "/", loading: false})
         }
         else {
-          var success = res.data.success
-          var userId = res.data.user_id
-          if (!success) {
-            console.log("Post request for creating user returned unsuccesful")
-          }
-          else {
-            this.setState({userId: userId})
-            console.log("returned user id: ", userId)
-          }
+          // otherwise, create user.
+          // setTimeout is used here to apply the initial fade in transition
+          this.setState({loading: false})
+          setTimeout(()=>{
+            this.chat.current.className += " loaded"
+            this.roomNameTitle.current.className += " loaded"
+          }, 0)
+          // Generate user
+          console.log(API_URL + `/user?session_id=${this.props.match.params.session}`)
+          axios.post(API_URL + `/user?session_id=${this.props.match.params.session}`)
+            .then((res) => {
+              if (res.status != 200) {
+                console.log("Response status not 200.")
+                return
+              }
+              else {
+                var success = res.data.success
+                var userId = res.data.user_id
+                if (!success) {
+                  console.log("Post request for creating user returned unsuccesful")
+                }
+                else {
+                  this.setState({userId: userId})
+                  console.log("returned user id: ", userId)
+                }
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            })
         }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
   setAlias(name) {
-    this.setState({alias: name})
-    console.log("Set alias as: ", name)
+    this.setState({userAlias: name})
   }
   render() {
+    if (this.state.loading) {
+      return <></>
+    }
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />
+    }
     return(
       <div className="backGround">
         {this.state.showSetAlias ?
         <SetAlias show={this.state.showSetAlias}
           setAlias={this.setAlias.bind(this)}
-          roomName={this.state.roomName}
+          roomName={this.props.match.params.session}
+          userId={this.state.userId}
           className="modal"
           ref={this.modal}/>
           :<></>}
@@ -160,7 +215,7 @@ class Room extends Component {
         <Row>
           <Col>
             <p className="roomName" ref={this.roomNameTitle}>
-              {this.state.roomName}
+              {this.props.match.params.session}
             </p>
           </Col>
         </Row>

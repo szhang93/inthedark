@@ -16,20 +16,21 @@ import ListGroup from 'react-bootstrap/ListGroup';
 class Bubble extends Component {
   constructor (props) {
     super(props)
-    this.state = {}
   }
   render () {
     return (
       <>
         <div className = "bubbleBundle">
-          <div className = "userAlias">
-            {this.props.userAlias}
+          <div>
+            <div className = "userAlias">
+              {this.props.userAlias}
+            </div>
+            <div className = "timeStamp">
+              {this.props.timeStamp}
+            </div>
           </div>
           <div className = "bubble">
             {this.props.text}
-          </div>
-          <div className = "timeStamp">
-            {this.props.timeStamp}
           </div>
         </div>
       </>
@@ -40,18 +41,20 @@ class Chat extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      bubbles: [<Bubble />]
+      bubbles: [],
+      users: 0
     }
     this.inputText = React.createRef()
     this.sendButton = React.createRef()
     this.chatEnd = React.createRef()
     this.sendMessage = this.sendMessage.bind(this)
+    this.checkEnter = this.checkEnter.bind(this)
   }
   bubbleList () {
     console.log(this.state.bubbles)
     const messages = this.state.bubbles.map((bubble, idx) => {
       return(
-        <li key={idx}>
+        <li key={idx} style={{"list-style-type": "none"}}>
           {bubble}
         </li>
     )})
@@ -61,6 +64,11 @@ class Chat extends Component {
       </div>
     )
   }
+  checkEnter (e) {
+    if (e.key == "Enter") {
+      this.sendButton.current.click()
+    }
+  }
   sendMessage () {
     // For now, append to bubble List
     const text = this.inputText.current.value
@@ -68,9 +76,13 @@ class Chat extends Component {
     this.setState((prevState) => ({
       bubbles: [...prevState.bubbles, newBubble]
     }))
+    this.inputText.current.value = ""
   }
   componentDidUpdate () {
     this.chatEnd.current.scrollIntoView({behavior: "smooth"})
+  }
+  componentDidMount () {
+    this.inputText.current.select()
   }
   render () {
     return(
@@ -85,7 +97,8 @@ class Chat extends Component {
           <Col className="textArea">
             <InputGroup>
               <FormControl size="lg"
-                ref={this.inputText}>
+                ref={this.inputText}
+                onKeyPress={this.checkEnter}>
               </FormControl>
               <InputGroup.Append>
               <Button variant="dark"
@@ -100,7 +113,7 @@ class Chat extends Component {
         </Row>
         <Row>
           <Col>
-            <p className="userCount">20 loafers in this room</p>
+            <p className="userCount">{this.state.users} loafers in this room</p>
           </Col>
         </Row>
       </Container>

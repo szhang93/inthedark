@@ -281,7 +281,8 @@ class Home extends Component {
               >
                 <div className="bottomMargin">
                   <p className="Description">Inthedark is a temporary chatroom creation app.</p>
-                  <p className="Description">Your messages are deleted once the chatroom is empty.</p>
+                  <p className="Description">Your messages are stored locally on your browser.</p>
+                  <p className="Description">Rooms and users are deleted after inactivity.</p>
                 </div>
                 <JoinChatButtons />
               </div>

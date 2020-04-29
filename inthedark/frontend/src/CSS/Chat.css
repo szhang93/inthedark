@@ -14,17 +14,33 @@
 
 }
 .userAlias {
-  text-align: right;
+  margin-left: 0vh;
+  text-align: left;
+  display: inline-block;
+  width: 50%;
 }
 .bubble {
   display: flex;
+  background-color: #23272b;
+  color: white;
+  text-align: left;
+  padding: 1vh 2vh 1vh 2vh;
+  border-radius: 2vh;
+  display: inline-block;
+  max-width: 90vw;
+  overflow-wrap: normal;
+  word-wrap: break-word;
 }
 .timeStamp {
   text-align: right;
+  display: inline-block;
+  float: right;
+  width: 30%;
+  color: gray;
 }
 
 .userCount {
-  font-size: 2.5vh;
-  color: #23272b;
+  font-size: 2vh;
+  color: gray;
   text-align: center;
 }
