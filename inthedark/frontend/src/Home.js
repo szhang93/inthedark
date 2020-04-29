@@ -103,7 +103,7 @@ class Input extends Component {
             if (!nameExists) {
               this.setState({
                 inputText: "",
-                alertMsg: "This room you are trying to join does not exist.",
+                alertMsg: "The room you are trying to join does not exist.",
                 alertShow: true
               })
             }

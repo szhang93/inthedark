@@ -18,10 +18,12 @@
   text-align: left;
   display: inline-block;
   width: 50%;
+  color: #343a40;
+  font-size: 2.5vh;
 }
 .bubble {
+  background-color: #343a40;
   display: flex;
-  background-color: #23272b;
   color: white;
   text-align: left;
   padding: 1vh 2vh 1vh 2vh;

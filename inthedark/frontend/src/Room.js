@@ -15,7 +15,17 @@ import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
 
-
+const colors = [
+  "#f54242", // Red
+  "#f59342", // Orange
+  "#f5d142", // Yellow
+  "#e0f542", // Neon
+  "#75f542", // Green
+  "#42f5d4", // Cyan
+  "#42c5f5", // Blue
+  "#e270ff", // Purple
+  "#ff78c4", // Pink
+]
 
 class SetAlias extends Component {
   constructor(props) {

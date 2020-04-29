@@ -7,11 +7,11 @@
 .roomName {
   text-align: center;
   font-size: 10vh;
-  color: Black;
   height: 30%;
   opacity: 0;
   transform: translate(0,-1em);
   transition: 1s ease-in-out;
+  color: #343a40;
 }
 .roomName.loaded {
   opacity: 1;

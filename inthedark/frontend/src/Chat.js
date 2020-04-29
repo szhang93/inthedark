@@ -12,6 +12,16 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+const colors = [
+  "#f54242", // Red
+  "#f59342", // Orange
+  "#f5d142", // Yellow
+  "#e0f542", // Neon
+  "#42f5d4", // Cyan
+  "#42c5f5", // Blue
+  "#e270ff", // Purple
+  "#ff78c4", // Pink
+]
 
 class Bubble extends Component {
   constructor (props) {
@@ -25,11 +35,11 @@ class Bubble extends Component {
             <div className = "userAlias">
               {this.props.userAlias}
             </div>
-            <div className = "timeStamp">
+            <div className = "timeStamp" >
               {this.props.timeStamp}
             </div>
           </div>
-          <div className = "bubble">
+          <div className = "bubble" style={{color: this.props.color}}>
             {this.props.text}
           </div>
         </div>
@@ -42,7 +52,8 @@ class Chat extends Component {
     super(props)
     this.state = {
       bubbles: [],
-      users: 0
+      users: 0,
+      myColor: '#f54242'
     }
     this.inputText = React.createRef()
     this.sendButton = React.createRef()
@@ -54,7 +65,7 @@ class Chat extends Component {
     console.log(this.state.bubbles)
     const messages = this.state.bubbles.map((bubble, idx) => {
       return(
-        <li key={idx} style={{"list-style-type": "none"}}>
+        <li key={idx} style={{"listStyleType": "none"}}>
           {bubble}
         </li>
     )})
@@ -72,7 +83,7 @@ class Chat extends Component {
   sendMessage () {
     // For now, append to bubble List
     const text = this.inputText.current.value
-    const newBubble = <Bubble userAlias="bob" text={text} timeStamp="10/19/2019"/>
+    const newBubble = <Bubble userAlias="bob" text={text} timeStamp="10/19/2019" color={this.state.myColor}/>
     this.setState((prevState) => ({
       bubbles: [...prevState.bubbles, newBubble]
     }))
@@ -83,6 +94,10 @@ class Chat extends Component {
   }
   componentDidMount () {
     this.inputText.current.select()
+    // Choose random color for user.
+    var myColorIdx = Math.floor(Math.random() * colors.length)
+    console.log("Setting color to: ", colors[myColorIdx])
+    this.setState({myColor: colors[myColorIdx]})
   }
   render () {
     return(
@@ -104,7 +119,8 @@ class Chat extends Component {
               <Button variant="dark"
                 size="lg"
                 ref={this.sendButton}
-                onClick={this.sendMessage}>
+                onClick={this.sendMessage}
+                style={{color: this.state.myColor}}>
                 Send
               </Button>
               </InputGroup.Append>
