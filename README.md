@@ -8,6 +8,9 @@ Current features:
 * Chat room auto deletes once empty.
 
 ![alt text](/inthedark/screenshots/1.png?raw=true)
+
+* Cool colors too.
+
 ![alt text](/inthedark/screenshots/2.png?raw=true)
 
 Frontend: create-a-react-app
