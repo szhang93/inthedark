@@ -62,9 +62,9 @@ io.on('connection', (socket) => {
   user_alias = socket.handshake.query.user_alias
   room = socket.handshake.query.room
   console.log("user connected: ",user_id, user_alias, room)
-  socket.emit(room, {
+  io.emit(room, {
     type: msgCode.CONNECTION,
-    user_alias: user_alias
+    message: `${user_alias} joined the chat`
   })
 
   socket.on("bubble", (msg) => {
@@ -78,9 +78,9 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', () => {
-    socket.emit(room, {
+    io.emit(room, {
       type: msgCode.DISCONNECT,
-      user_alias: user_alias
+      message: `${user_alias} has disconnected`
     })
   })
 })

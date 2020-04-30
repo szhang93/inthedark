@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from "axios";
 import {API_URL} from './utils/API'
+import BubbleList from './utils/BubbleList'
 // CSS, BOOTSTRAP and ADDONS
 import './CSS/Chat.css';
 
@@ -14,7 +15,11 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import io from 'socket.io-client'
 
-const maxMessageLen = 200;
+// Max number of bubbles allowed in a chat before older bubbles get deleted
+const maxBubbles = 50
+// Max length of a message that can be sent
+const maxMessageLen = 200
+// Color texts you can have
 const colors = [
   "#f54242", // Red
   "#f59342", // Orange
@@ -25,7 +30,7 @@ const colors = [
   "#e270ff", // Purple
   "#ff78c4", // Pink
 ]
-
+// Socket message codes
 const msgCode = {
   CONNECTION : 0,
   DISCONNECT : 1,
@@ -60,7 +65,7 @@ class Chat extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      bubbles: [],
+      bubbles: new BubbleList(),
       users: 0,
       myColor: '#f54242'
     }
@@ -69,6 +74,7 @@ class Chat extends Component {
     this.chatEnd = React.createRef()
     this.sendMessage = this.sendMessage.bind(this)
     this.postMessage = this.postMessage.bind(this)
+    this.postSystemMessage = this.postSystemMessage.bind(this)
     this.checkEnter = this.checkEnter.bind(this)
     this.inputChanged = this.inputChanged.bind(this)
 
@@ -79,11 +85,14 @@ class Chat extends Component {
     })
 
     this.sock.on(this.props.roomName, (msg) => {
+      console.log("users count ", this.state.users)
       if (msg.type == msgCode.CONNECTION) {
-
+        this.postSystemMessage(msg.message)
+        this.setState({users: this.state.users + 1})
       }
       else if (msg.type == msgCode.DISCONNECT) {
-
+        this.postSystemMessage(msg.message)
+        this.setState({users: this.state.users - 1})
       }
       else if (msg.type == msgCode.MESSAGE) {
         this.postMessage(msg.user_alias, msg.message, msg.timeStamp, msg.color)
@@ -92,12 +101,20 @@ class Chat extends Component {
 
   }
   bubbleList () {
-    const messages = this.state.bubbles.map((bubble, idx) => {
-      return(
-        <li key={idx} style={{"listStyleType": "none"}}>
-          {bubble}
+    if (!this.state) {
+      return <></>
+    }
+    var messages = []
+    var node = this.state.bubbles.getHead
+    console.log(this.state.bubbles)
+    while(node) {
+      messages.push(
+        <li key={node.key} style={{"listStyleType": "none"}}>
+          {node.element}
         </li>
-    )})
+      )
+      node = node.next
+    }
     return(
       <div>
         {messages}
@@ -131,9 +148,23 @@ class Chat extends Component {
                       text={message}
                       timeStamp={timeStamp}
                       color={color}/>
-    this.setState((prevState) => ({
-      bubbles: [...prevState.bubbles, newBubble]
-    }))
+
+    // Push new bubble onto bubbles
+    this.state.bubbles.push(newBubble)
+    // If we are at max capacity, deleted oldest bubble
+    if (this.state.bubbles.getSize > maxBubbles) {
+      this.state.bubbles.deleteFront()
+    }
+    this.forceUpdate()
+  }
+  postSystemMessage (message) {
+    const systemMessage= <p className="systemMessage">{message}</p>
+    this.state.bubbles.push(systemMessage)
+    // If we are at max capacity, deleted oldest bubble
+    if (this.state.bubbles.getSize > maxBubbles) {
+      this.state.bubbles.deleteFront()
+    }
+    this.forceUpdate()
   }
   componentDidUpdate () {
     this.chatEnd.current.scrollIntoView()

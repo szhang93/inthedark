@@ -59,3 +59,8 @@
   color: gray;
   text-align: center;
 }
+.systemMessage {
+   font-size: 2vh;
+   color: gray;
+   text-align: center;
+ }
