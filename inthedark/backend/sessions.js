@@ -144,3 +144,70 @@ exports.createUser = (req, res) => {
     })
   })
 }
+
+// Get session count
+exports.getSessionUserCount = (req, res) => {
+  session_id = req.query.session_id
+  query = `SELECT COUNT(*) AS count FROM sessions JOIN users
+  ON sessions.session_id = users.session_id
+  AND sessions.session_id = '${session_id}'`
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      res.status(500).end()
+    }
+    else {
+      res.status(200).json({"success":true, "count":result[0].count})
+    }
+  })
+}
+
+// Get session count
+exports._getSessionUserCount = (session_id, cb) => {
+  query = `SELECT COUNT(*) AS count FROM sessions JOIN users
+  ON sessions.session_id = users.session_id
+  AND sessions.session_id = '${session_id}'`
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      if (cb) {cb(null)}
+    }
+    else {
+      if (cb) {cb(result[0].count)}
+    }
+  })
+}
+
+// Delete user
+exports.deleteUser = (user_id, cb) => {
+  query = `DELETE FROM users WHERE user_id=${user_id}`
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      if (cb) {cb(null)}
+    }
+    else {
+      console.log("Deleted user: ", user_id)
+      if (cb) {cb(user_id)}
+    }
+  })
+}
+
+// Delete session
+exports.deleteSession = (session_id, cb) => {
+  query = `DELETE FROM sessions WHERE session_id='${session_id}'`
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      if (cb) {cb(null)}
+    }
+    else {
+      console.log("Deleted session: ", session_id)
+      if (cb) {cb(session_id)}
+    }
+  })
+}
+
+//BACKLOG
+// Remove all inactive users
+// Remove all inactive sessions

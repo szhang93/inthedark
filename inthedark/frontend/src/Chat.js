@@ -25,7 +25,7 @@ const colors = [
   "#f59342", // Orange
   "#f5d142", // Yellow
   "#e0f542", // Neon
-  "#42f5d4", // Cyan
+  "#9aede6", // Cyan
   "#42c5f5", // Blue
   "#e270ff", // Purple
   "#ff78c4", // Pink
@@ -77,28 +77,46 @@ class Chat extends Component {
     this.postSystemMessage = this.postSystemMessage.bind(this)
     this.checkEnter = this.checkEnter.bind(this)
     this.inputChanged = this.inputChanged.bind(this)
+    this.updateUserCount = this.updateUserCount.bind(this)
 
-
-    this.sock = io.connect(API_URL, {
+    this.sock = io(API_URL, {
       reconnect: true,
       query: `user_id=${this.props.userId}&user_alias=${this.props.userAlias}&room=${this.props.roomName}`
-    })
+    }).connect()
 
     this.sock.on(this.props.roomName, (msg) => {
       console.log("users count ", this.state.users)
       if (msg.type == msgCode.CONNECTION) {
+        this.updateUserCount()
         this.postSystemMessage(msg.message)
-        this.setState({users: this.state.users + 1})
       }
       else if (msg.type == msgCode.DISCONNECT) {
+        this.updateUserCount()
         this.postSystemMessage(msg.message)
-        this.setState({users: this.state.users - 1})
       }
       else if (msg.type == msgCode.MESSAGE) {
         this.postMessage(msg.user_alias, msg.message, msg.timeStamp, msg.color)
       }
     })
 
+  }
+  updateUserCount() {
+    // Get user count for this session
+    console.log(API_URL + `/user_count?session_id=${this.props.roomName}`)
+    axios.get(API_URL + `/user_count?session_id=${this.props.roomName}`)
+    .then((res) => {
+      if (res.status != 200) {
+        console.log("Response status not 200.")
+      }
+      else {
+        // We have to subtract 1 to offset the +1 from the socket connection
+        // Detecting this user joining
+        this.setState({users: res.data.count})
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
   bubbleList () {
     if (!this.state) {

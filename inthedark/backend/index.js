@@ -46,6 +46,11 @@ app.get('/session_exists', sessions.sessionExists)
  * response: user_id [Unique] [Number]
  */
 app.post('/user', sessions.createUser)
+/*
+ * query: session_id
+ * response: count
+ */
+app.get('/user_count', sessions.getSessionUserCount)
 
 
 // Socket functions
@@ -55,12 +60,13 @@ const msgCode = {
   DISCONNECT : 1,
   MESSAGE : 2
 }
+
 var io = socketIo(server)
 io.origins('*:*') // Allows cors
 io.on('connection', (socket) => {
-  user_id = socket.handshake.query.user_id
-  user_alias = socket.handshake.query.user_alias
-  room = socket.handshake.query.room
+  const user_id = socket.handshake.query.user_id
+  const user_alias = socket.handshake.query.user_alias
+  const room = socket.handshake.query.room
   console.log("user connected: ",user_id, user_alias, room)
   io.emit(room, {
     type: msgCode.CONNECTION,
@@ -77,10 +83,18 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', (socket) => {
+    console.log(user_alias, " has disconnected")
     io.emit(room, {
       type: msgCode.DISCONNECT,
       message: `${user_alias} has disconnected`
+    })
+    sessions.deleteUser(user_id, () => {
+      sessions._getSessionUserCount(room, (count) => {
+        if (count == 0) {
+          sessions.deleteSession(session_id)
+        }
+      })
     })
   })
 })
