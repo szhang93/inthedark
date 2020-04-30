@@ -13,11 +13,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
 
-// Socket connect to backend
-import io from 'socket.io-client'
-const sock = io.connect("http://127.0.0.1:8080", {reconnect: true})
-
-const btnState = {NONE:0, CREATE:1, JOIN:2}
+const btnState = {
+  NONE: 0,
+  CREATE: 1,
+  JOIN: 2
+}
 const maxNameLen = 100;
 
 class Input extends Component {

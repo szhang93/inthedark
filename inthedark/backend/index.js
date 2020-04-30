@@ -50,11 +50,40 @@ app.post('/user', sessions.createUser)
 
 // Socket functions
 // ------------------------------------------------
+const msgCode = {
+  CONNECTION : 0,
+  DISCONNECT : 1,
+  MESSAGE : 2
+}
 var io = socketIo(server)
 io.origins('*:*') // Allows cors
 io.on('connection', (socket) => {
-  console.log('a user connected');
-});
+  user_id = socket.handshake.query.user_id
+  user_alias = socket.handshake.query.user_alias
+  room = socket.handshake.query.room
+  console.log("user connected: ",user_id, user_alias, room)
+  socket.emit(room, {
+    type: msgCode.CONNECTION,
+    user_alias: user_alias
+  })
+
+  socket.on("bubble", (msg) => {
+    io.emit(msg.room, {
+      type: msgCode.MESSAGE,
+      user_alias: msg.user_alias,
+      message: msg.message,
+      color : msg.color,
+      time_stamp: msg.time_stamp
+    })
+  })
+
+  socket.on('disconnect', () => {
+    socket.emit(room, {
+      type: msgCode.DISCONNECT,
+      user_alias: user_alias
+    })
+  })
+})
 
 
 

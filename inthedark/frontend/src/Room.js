@@ -135,7 +135,7 @@ class Room extends Component {
     this.state = {
       userId: null,
       showSetAlias: true,
-      alias: "",
+      userAlias: "",
       loading: true
     }
     this.chat = React.createRef()
@@ -224,7 +224,11 @@ class Room extends Component {
         </Row>
           <Row className="chatScreen" ref={this.chat}>
             <Col>
-              <Chat userId={this.state.userId} />
+              {this.state.userAlias != "" ?
+              <Chat userId={this.state.userId}
+              userAlias={this.state.userAlias}
+              roomName={this.props.match.params.session} />
+              :<></>}
             </Col>
           </Row>
         </Container>

@@ -14,8 +14,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import io from 'socket.io-client'
 
-
-
 const maxMessageLen = 200;
 const colors = [
   "#f54242", // Red
@@ -27,6 +25,12 @@ const colors = [
   "#e270ff", // Purple
   "#ff78c4", // Pink
 ]
+
+const msgCode = {
+  CONNECTION : 0,
+  DISCONNECT : 1,
+  MESSAGE : 2
+}
 
 class Bubble extends Component {
   constructor (props) {
@@ -64,14 +68,30 @@ class Chat extends Component {
     this.sendButton = React.createRef()
     this.chatEnd = React.createRef()
     this.sendMessage = this.sendMessage.bind(this)
+    this.postMessage = this.postMessage.bind(this)
     this.checkEnter = this.checkEnter.bind(this)
     this.inputChanged = this.inputChanged.bind(this)
 
-    // Socket connect to backend
-    const sock = io.connect("http://127.0.0.1:8080", {reconnect: true})
+
+    this.sock = io.connect(API_URL, {
+      reconnect: true,
+      query: `user_id=${this.props.userId}&user_alias=${this.props.userAlias}&room=${this.props.roomName}`
+    })
+
+    this.sock.on(this.props.roomName, (msg) => {
+      if (msg.type == msgCode.CONNECTION) {
+
+      }
+      else if (msg.type == msgCode.DISCONNECT) {
+
+      }
+      else if (msg.type == msgCode.MESSAGE) {
+        this.postMessage(msg.user_alias, msg.message, msg.timeStamp, msg.color)
+      }
+    })
+
   }
   bubbleList () {
-    console.log(this.state.bubbles)
     const messages = this.state.bubbles.map((bubble, idx) => {
       return(
         <li key={idx} style={{"listStyleType": "none"}}>
@@ -95,13 +115,25 @@ class Chat extends Component {
     }
   }
   sendMessage () {
-    // For now, append to bubble List
-    const text = this.inputBox.current.value
-    const newBubble = <Bubble userAlias="bob" text={text} timeStamp="10/19/2019" color={this.state.myColor}/>
+    const bubble = {
+      user_id: this.props.userId,
+      user_alias: this.props.userAlias,
+      message: this.inputBox.current.value,
+      color: this.state.myColor,
+      room: this.props.roomName
+    }
+    this.sock.emit("bubble", bubble)
+    this.inputBox.current.value = ""
+  }
+  postMessage (userAlias, message, timeStamp, color) {
+    console.log(message)
+    const newBubble = <Bubble userAlias={userAlias}
+                      text={message}
+                      timeStamp={timeStamp}
+                      color={color}/>
     this.setState((prevState) => ({
       bubbles: [...prevState.bubbles, newBubble]
     }))
-    this.inputBox.current.value = ""
   }
   componentDidUpdate () {
     this.chatEnd.current.scrollIntoView()
