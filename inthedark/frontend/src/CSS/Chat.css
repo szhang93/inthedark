@@ -64,3 +64,6 @@
    color: gray;
    text-align: center;
  }
+ .chatEnd {
+   height: 1vh;
+ }

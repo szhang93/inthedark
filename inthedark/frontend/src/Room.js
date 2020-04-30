@@ -68,8 +68,8 @@ class SetAlias extends Component {
   submitClicked() {
     var nickName = this.inputBox.current.value
     if (nickName.length > 0) {
-      console.log("Attemping to set alias as: ", nickName)
-      console.log(API_URL + "/user_alias")
+      //console.log("Attemping to set alias as: ", nickName)
+      //console.log(API_URL + "/user_alias")
       axios.put(API_URL + "/user_alias", {
         session_id: this.props.roomName,
         user_id: this.props.userId,
@@ -143,7 +143,7 @@ class Room extends Component {
   }
   componentDidMount() {
     // Check if sesion is valid
-    console.log(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
+    //console.log(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
     axios.get(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
     .then((res) => {
       if (res.status != 200) {
@@ -153,7 +153,7 @@ class Room extends Component {
       else {
         if (!res.data.success) {
           // If sesssion doesn't exist, redirect to home page
-          console.log("session doesn't exist")
+          //console.log("session doesn't exist")
           this.setState({redirect: "/", loading: false})
         }
         else {
@@ -165,7 +165,7 @@ class Room extends Component {
             this.roomNameTitle.current.className += " loaded"
           }, 0)
           // Generate user
-          console.log(API_URL + `/user?session_id=${this.props.match.params.session}`)
+          //console.log(API_URL + `/user?session_id=${this.props.match.params.session}`)
           axios.post(API_URL + `/user?session_id=${this.props.match.params.session}`)
             .then((res) => {
               if (res.status != 200) {
@@ -180,7 +180,7 @@ class Room extends Component {
                 }
                 else {
                   this.setState({userId: userId})
-                  console.log("returned user id: ", userId)
+                  //console.log("returned user id: ", userId)
                 }
               }
             })

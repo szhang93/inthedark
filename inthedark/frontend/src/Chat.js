@@ -85,7 +85,7 @@ class Chat extends Component {
     }).connect()
 
     this.sock.on(this.props.roomName, (msg) => {
-      console.log("users count ", this.state.users)
+      //console.log("users count ", this.state.users)
       if (msg.type == msgCode.CONNECTION) {
         this.updateUserCount()
         this.postSystemMessage(msg.message)
@@ -102,7 +102,7 @@ class Chat extends Component {
   }
   updateUserCount() {
     // Get user count for this session
-    console.log(API_URL + `/user_count?session_id=${this.props.roomName}`)
+    //console.log(API_URL + `/user_count?session_id=${this.props.roomName}`)
     axios.get(API_URL + `/user_count?session_id=${this.props.roomName}`)
     .then((res) => {
       if (res.status != 200) {
@@ -124,7 +124,7 @@ class Chat extends Component {
     }
     var messages = []
     var node = this.state.bubbles.getHead
-    console.log(this.state.bubbles)
+    //console.log(this.state.bubbles)
     while(node) {
       messages.push(
         <li key={node.key} style={{"listStyleType": "none"}}>
@@ -134,9 +134,7 @@ class Chat extends Component {
       node = node.next
     }
     return(
-      <div>
-        {messages}
-      </div>
+        messages
     )
   }
   checkEnter (e) {
@@ -150,6 +148,7 @@ class Chat extends Component {
     }
   }
   sendMessage () {
+    if (!this.inputBox.current.value) {return}
     const bubble = {
       user_id: this.props.userId,
       user_alias: this.props.userAlias,
@@ -161,7 +160,11 @@ class Chat extends Component {
     this.inputBox.current.value = ""
   }
   postMessage (userAlias, message, timeStamp, color) {
-    console.log(message)
+    // If we are at max capacity, deleted oldest bubble
+    if (this.state.bubbles.getSize > maxBubbles) {
+      this.state.bubbles.deleteFront()
+    }
+    //console.log(message)
     const newBubble = <Bubble userAlias={userAlias}
                       text={message}
                       timeStamp={timeStamp}
@@ -169,19 +172,17 @@ class Chat extends Component {
 
     // Push new bubble onto bubbles
     this.state.bubbles.push(newBubble)
-    // If we are at max capacity, deleted oldest bubble
-    if (this.state.bubbles.getSize > maxBubbles) {
-      this.state.bubbles.deleteFront()
-    }
+    this.chatEnd.current.scrollIntoView()
     this.forceUpdate()
   }
   postSystemMessage (message) {
-    const systemMessage= <p className="systemMessage">{message}</p>
-    this.state.bubbles.push(systemMessage)
     // If we are at max capacity, deleted oldest bubble
-    if (this.state.bubbles.getSize > maxBubbles) {
+    if (this.state.bubbles.getSize >= maxBubbles) {
       this.state.bubbles.deleteFront()
     }
+    const systemMessage= <p className="systemMessage">{message}</p>
+    this.state.bubbles.push(systemMessage)
+    this.chatEnd.current.scrollIntoView()
     this.forceUpdate()
   }
   componentDidUpdate () {
@@ -191,7 +192,7 @@ class Chat extends Component {
     this.inputBox.current.select()
     // Choose random color for user.
     var myColorIdx = Math.floor(Math.random() * colors.length)
-    console.log("Setting color to: ", colors[myColorIdx])
+    //console.log("Setting color to: ", colors[myColorIdx])
     this.setState({myColor: colors[myColorIdx]})
   }
   render () {
@@ -200,7 +201,7 @@ class Chat extends Component {
         <Row className="bubbleArea">
           <div className="scrollArea">
             {this.bubbleList()}
-            <div ref={this.chatEnd}></div>
+            <div className = "chatEnd" ref={this.chatEnd}></div>
           </div>
         </Row>
         <Row className="justify-content-md-center" md="auto">

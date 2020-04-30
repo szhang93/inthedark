@@ -46,7 +46,7 @@ class Input extends Component {
   }
   // Returns whether string is alphanumeric
   isInputValid(string) {
-    var pattern = /^(\d*\w*-*_* *)+$/i
+    var pattern = /^(\d*\w*-*_*)+$/i
     return (pattern.test(string))
   }
   submitClicked() {
@@ -62,7 +62,7 @@ class Input extends Component {
       // If we are creating a room
       if (this.props.type == btnState.CREATE) {
         // If we are creating a new room, the session name must not exist
-        console.log(API_URL + `/session`)
+        //console.log(API_URL + `/session`)
         axios.post(API_URL + `/session`, {
           "session_id": this.state.inputText
         })
@@ -82,7 +82,7 @@ class Input extends Component {
             })
           }
           else {
-            console.log("Name is free to use")
+            //console.log("Name is free to use")
             this.btnSubmit.current.setAttribute("disabled", "disabled")
             // Nagivate to Room page
             this.setState({"redirect": sessionId})
@@ -95,7 +95,7 @@ class Input extends Component {
       else if (this.props.type == btnState.JOIN) {
         // If we want to join a room, the session name must already exist
         // Check if session name already exists
-        console.log(API_URL + `/session_exists?session_id=${this.state.inputText}`)
+        //console.log(API_URL + `/session_exists?session_id=${this.state.inputText}`)
         axios.get(API_URL + `/session_exists?session_id=${this.state.inputText}`)
           .then((res) => {
             if (res.status != 200) {
@@ -112,7 +112,7 @@ class Input extends Component {
               })
             }
             else {
-              console.log("Joining Room")
+              //console.log("Joining Room")
               this.btnSubmit.current.setAttribute("disabled", "disabled")
               // Nagivate to Room page
               this.setState({"redirect": sessionId})
@@ -138,8 +138,8 @@ class Input extends Component {
     else{
       this.setState({
         inputText: "",
-        alertMsg: "Names can only include alphanumeric, '-', '_', ' '. \
-        No special characters are allowed.",
+        alertMsg: "Names can only include alphanumeric, '-', '_'. \
+        No spaces or special characters are allowed.",
         alertShow: true
       })
     }
