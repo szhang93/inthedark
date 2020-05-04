@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 // Allow cross origin
 // Currently allows any origin.
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "*",
 }))
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*")
@@ -64,15 +64,18 @@ const msgCode = {
 var io = socketIo(server)
 io.origins('*:*') // Allows cors
 io.on('connection', (socket) => {
+  // Obtain user_id, alias, etc
   const user_id = socket.handshake.query.user_id
   const user_alias = socket.handshake.query.user_alias
   const room = socket.handshake.query.room
-  console.log("user connected: ",user_id, user_alias, room)
+
+  // Emit message to the room that someone has joined
   io.emit(room, {
     type: msgCode.CONNECTION,
     message: `${user_alias} joined the chat`
   })
 
+  // Receive a message
   socket.on("bubble", (msg) => {
     io.emit(msg.room, {
       type: msgCode.MESSAGE,
@@ -83,12 +86,16 @@ io.on('connection', (socket) => {
     })
   })
 
+  // Emit that someone has disconnected.
+  // Also, check to see if the room is empty.
   socket.on('disconnect', (socket) => {
     console.log(user_alias, " has disconnected")
     io.emit(room, {
       type: msgCode.DISCONNECT,
       message: `${user_alias} has disconnected`
     })
+
+    // Delete the user from database and delete session if empty
     sessions.deleteUser(user_id, () => {
       sessions._getSessionUserCount(room, (count) => {
         if (count == 0) {

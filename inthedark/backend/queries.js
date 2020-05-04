@@ -1,5 +1,7 @@
 var db = require('./db')
 
+// Table template
+
 const dropSessionTable = "DROP TABLE sessions"
 
 const createSessionTable =

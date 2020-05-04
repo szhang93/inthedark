@@ -43,6 +43,7 @@ exports.createSession = (req, res) => {
   })
 }
 
+// Set a user alias for a user 
 exports.setUserAlias = (req, res) => {
   console.log("------------calling setUserAlias--------------------")
   user_id = req.body.user_id
@@ -132,6 +133,7 @@ exports.createUser = (req, res) => {
     }
     console.log("Inserted new user into db")
 
+    // Retrieve user id and return as json
     query = `SELECT lAST_INSERT_ID() AS user_id`
     db.query(query, (err, result) => {
       if (err) {
