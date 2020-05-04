@@ -66,7 +66,7 @@ class SetAlias extends Component {
     }
   }
   submitClicked() {
-    var nickName = this.inputBox.current.value
+    var nickName = this.inputBox.current.value.toLowerCase()
     if (nickName.length > 0) {
       //console.log("Attemping to set alias as: ", nickName)
       //console.log(API_URL + "/user_alias")
@@ -144,7 +144,7 @@ class Room extends Component {
   componentDidMount() {
     // Check if sesion is valid
     //console.log(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
-    axios.get(API_URL + `/session_exists?session_id=${this.props.match.params.session}`)
+    axios.get(API_URL + `/session_exists?session_id=${this.props.match.params.session.toLowerCase()}`)
     .then((res) => {
       if (res.status != 200) {
         console.log("Response status not 200.")
@@ -166,7 +166,7 @@ class Room extends Component {
           }, 0)
           // Generate user
           //console.log(API_URL + `/user?session_id=${this.props.match.params.session}`)
-          axios.post(API_URL + `/user?session_id=${this.props.match.params.session}`)
+          axios.post(API_URL + `/user?session_id=${this.props.match.params.session.toLowerCase()}`)
             .then((res) => {
               if (res.status != 200) {
                 console.log("Response status not 200.")
@@ -209,7 +209,7 @@ class Room extends Component {
         {this.state.showSetAlias ?
         <SetAlias show={this.state.showSetAlias}
           setAlias={this.setAlias.bind(this)}
-          roomName={this.props.match.params.session}
+          roomName={this.props.match.params.session.toLowerCase()}
           userId={this.state.userId}
           className="modal"
           ref={this.modal}/>
@@ -218,7 +218,7 @@ class Room extends Component {
         <Row>
           <Col>
             <p className="roomName" ref={this.roomNameTitle}>
-              {this.props.match.params.session}
+              {this.props.match.params.session.toLowerCase()}
             </p>
           </Col>
         </Row>
@@ -227,7 +227,7 @@ class Room extends Component {
               {this.state.userAlias != "" ?
               <Chat userId={this.state.userId}
               userAlias={this.state.userAlias}
-              roomName={this.props.match.params.session} />
+              roomName={this.props.match.params.session.toLowerCase()} />
               :<></>}
             </Col>
           </Row>

@@ -43,7 +43,7 @@ exports.createSession = (req, res) => {
   })
 }
 
-// Set a user alias for a user 
+// Set a user alias for a user
 exports.setUserAlias = (req, res) => {
   console.log("------------calling setUserAlias--------------------")
   user_id = req.body.user_id

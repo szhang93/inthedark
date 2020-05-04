@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
   // Obtain user_id, alias, etc
   const user_id = socket.handshake.query.user_id
   const user_alias = socket.handshake.query.user_alias
-  const room = socket.handshake.query.room.toLowerCase()
+  const room = socket.handshake.query.room
 
   // Emit message to the room that someone has joined
   io.emit(room, {

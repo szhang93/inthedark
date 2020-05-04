@@ -64,7 +64,7 @@ class Input extends Component {
         // If we are creating a new room, the session name must not exist
         //console.log(API_URL + `/session`)
         axios.post(API_URL + `/session`, {
-          "session_id": this.state.inputText
+          "session_id": this.state.inputText.toLowerCase()
         })
         .then((res) => {
           if (res.status != 200) {
@@ -73,7 +73,7 @@ class Input extends Component {
           }
           var nameExists = !res.data.success
           var userId = res.data.user_id
-          var sessionId = this.state.inputText
+          var sessionId = this.state.inputText.toLowerCase()
           if (nameExists) {
             this.setState({
               inputText: "",
@@ -96,14 +96,14 @@ class Input extends Component {
         // If we want to join a room, the session name must already exist
         // Check if session name already exists
         //console.log(API_URL + `/session_exists?session_id=${this.state.inputText}`)
-        axios.get(API_URL + `/session_exists?session_id=${this.state.inputText}`)
+        axios.get(API_URL + `/session_exists?session_id=${this.state.inputText.toLowerCase()}`)
           .then((res) => {
             if (res.status != 200) {
               console.log("Response status not 200.")
               return
             }
             var nameExists = res.data.success
-            var sessionId = this.state.inputText
+            var sessionId = this.state.inputText.toLowerCase()
             if (!nameExists) {
               this.setState({
                 inputText: "",
