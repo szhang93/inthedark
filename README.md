@@ -1,5 +1,7 @@
 # inthedark
 -------------------------------
+http://itdark.s3-website-us-west-1.amazonaws.com/
+
 Current features:
 --------------------
 * Create a temporary chat room!
@@ -15,3 +17,4 @@ Current features:
 
 Frontend: create-a-react-app
 Backend: Node.js, mySql
+Hosting: Heroku for backend API, aws s3 for frontend
