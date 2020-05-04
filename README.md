@@ -2,6 +2,10 @@
 -------------------------------
 http://itdark.s3-website-us-west-1.amazonaws.com/
 
+Bugs:
+--------------------
+* Join by url doesn't work for deployed version
+
 Current features:
 --------------------
 * Create a temporary chat room!
