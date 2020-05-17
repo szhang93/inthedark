@@ -2,9 +2,9 @@
 -------------------------------
 http://itdark.s3-website-us-west-1.amazonaws.com/
 
-Bugs:
+Current bugs:
 --------------------
-* Join by url doesn't work for deployed version
+* user count is buggy when mobile user joins
 
 Current features:
 --------------------
