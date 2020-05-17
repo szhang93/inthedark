@@ -58,7 +58,13 @@ app.get('/user_count', sessions.getSessionUserCount)
  * body: session_id
  */
 app.put('/user_with_alias', sessions.createUserWithAlias)
+/*
+ * query: session_id
+ */
 app.get('/random_user_alias', randomNames.genUserAlias)
+/*
+ * No queries
+ */
 app.get('/random_room', randomNames.genSessionName)
 
 

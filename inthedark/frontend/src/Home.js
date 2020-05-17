@@ -30,10 +30,12 @@ class Input extends Component {
     }
     this.btnSubmit = React.createRef();
     this.inputBox = React.createRef();
+    this.randomButton = React.createRef();
     this.buttonType = this.buttonType.bind(this)
     this.submitClicked = this.submitClicked.bind(this)
     this.checkEnter = this.checkEnter.bind(this)
     this.inputChanged = this.inputChanged.bind(this)
+    this.randomName = this.randomName.bind(this)
   }
   buttonType() {
     if(this.props.type == btnState.CREATE){return "Create"}
@@ -144,6 +146,32 @@ class Input extends Component {
       })
     }
   }
+  randomName() {
+    this.randomButton.current.setAttribute("disabled", true)
+    axios.get(API_URL + `/random_room`)
+    .then((res) => {
+      if (res.status != 200) {
+        console.log("Response status not 200.")
+        return
+      }
+      if (res.data.success) {
+        this.inputBox.current.value = res.data.name
+        this.setState({
+          inputText: res.data.name
+        })
+      }
+      else {
+        this.setState({
+          alertMsg: "Failed to retrieve a name. Try again?",
+          alertShow: true
+        })
+      }
+      this.randomButton.current.removeAttribute("disabled")
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
   componentDidUpdate(newProps) {
     // Select input box so user doesn't have to manually click it
     // Checks whether props are relevant
@@ -179,6 +207,14 @@ class Input extends Component {
               placeholder={"Enter Room Name"}
               onChange={this.inputChanged}
             />
+            {this.props.type == btnState.CREATE?
+              <InputGroup.Append>
+                <Button variant="outline-dark"
+                onClick={this.randomName}
+                ref={this.randomButton}
+                >{'Random'}</Button>
+              </InputGroup.Append>
+            :<></>}
             <InputGroup.Append>
               <Button variant="dark"
               ref={this.btnSubmit}
@@ -289,7 +325,7 @@ class Home extends Component {
                 <div className="bottomMargin">
                   <p className="Description">Inthedark is a temporary chatroom creation app.</p>
                   <p className="Description">Your messages are stored locally on your browser.</p>
-                  <p className="Description">Rooms are instantly deleted when empty.</p>
+                  <p className="Description">Rooms are deleted when empty.</p>
                 </div>
                 <JoinChatButtons />
               </div>

@@ -28,9 +28,11 @@ class SetAlias extends Component {
     }
     this.inputBox = React.createRef()
     this.btnSubmit = React.createRef()
+    this.randomButton = React.createRef()
     this.checkEnter = this.checkEnter.bind(this)
     this.submitClicked = this.submitClicked.bind(this)
     this.inputChanged = this.inputChanged.bind(this)
+    this.randomName = this.randomName.bind(this)
   }
   componentDidMount() {
     this.inputBox.current.select()
@@ -64,6 +66,32 @@ class SetAlias extends Component {
         alertShow: true
       })
     }
+  }
+  randomName() {
+    this.randomButton.current.setAttribute("disabled", true)
+    axios.get(API_URL + `/random_user_alias?session_id=${this.props.roomName}`)
+    .then((res) => {
+      if (res.status != 200) {
+        console.log("Response status not 200.")
+        return
+      }
+      if (res.data.success) {
+        this.inputBox.current.value = res.data.name
+        this.setState({
+          inputText: res.data.name
+        })
+      }
+      else {
+        this.setState({
+          alertMsg: "Failed to retrieve a name. Try again?",
+          alertShow: true
+        })
+      }
+      this.randomButton.current.removeAttribute("disabled")
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
   submitClicked() {
     var nickName = this.inputBox.current.value.toLowerCase()
@@ -114,6 +142,12 @@ class SetAlias extends Component {
               placeholder={"Alias"}
               onChange={this.inputChanged}
             />
+            <InputGroup.Append>
+              <Button variant="dark-outline"
+              ref={this.randomButton}
+              onClick={this.randomName}
+              >{"Random"}</Button>
+            </InputGroup.Append>
             <InputGroup.Append>
               <Button variant="dark"
               ref={this.btnSubmit}
