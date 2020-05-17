@@ -1,6 +1,7 @@
 # inthedark
 -------------------------------
-https://itdark.s3-us-west-1.amazonaws.com/
+https://itdark.s3-us-west-1.amazonaws.com/index.html
+
 Current bugs:
 --------------------
 * May be buggy for mobile users 
