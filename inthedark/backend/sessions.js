@@ -1,4 +1,5 @@
 var db = require('./db')
+var words = require('./words')
 /*
 * req.body:
 * name: "some_name"

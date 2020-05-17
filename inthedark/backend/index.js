@@ -2,6 +2,7 @@ const http = require('http')
 const bodyParser = require('body-parser')
 const express = require('express')
 var sessions = require('./sessions')
+var randomNames = require('./randomNames')
 var db = require('./db')
 var cors = require('cors')
 var socketIo = require('socket.io')
@@ -57,6 +58,8 @@ app.get('/user_count', sessions.getSessionUserCount)
  * body: session_id
  */
 app.put('/user_with_alias', sessions.createUserWithAlias)
+app.get('/random_user_alias', randomNames.genUserAlias)
+app.get('/random_room', randomNames.genSessionName)
 
 
 // Socket functions
