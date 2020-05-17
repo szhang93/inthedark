@@ -61,6 +61,8 @@ class Input extends Component {
     else{
       // If we are creating a room
       if (this.props.type == btnState.CREATE) {
+        // Immediately disable button
+        this.btnSubmit.current.setAttribute("disabled", true)
         // If we are creating a new room, the session name must not exist
         //console.log(API_URL + `/session`)
         axios.post(API_URL + `/session`, {
@@ -69,6 +71,7 @@ class Input extends Component {
         .then((res) => {
           if (res.status != 200) {
             console.log("Response status not 200.")
+            this.btnSubmit.current.removeAttribute("disabled")
             return
           }
           var nameExists = !res.data.success
@@ -76,14 +79,12 @@ class Input extends Component {
           var sessionId = this.state.inputText.toLowerCase()
           if (nameExists) {
             this.setState({
-              inputText: "",
               alertMsg: "A room with this name already exists.",
               alertShow: true
             })
+            this.btnSubmit.current.removeAttribute("disabled")
           }
           else {
-            //console.log("Name is free to use")
-            this.btnSubmit.current.setAttribute("disabled", "disabled")
             // Nagivate to Room page
             this.setState({"redirect": sessionId})
           }
@@ -93,6 +94,7 @@ class Input extends Component {
         })
       } // If we are joining a room
       else if (this.props.type == btnState.JOIN) {
+        this.btnSubmit.current.setAttribute("disabled", true)
         // If we want to join a room, the session name must already exist
         // Check if session name already exists
         //console.log(API_URL + `/session_exists?session_id=${this.state.inputText}`)
@@ -106,14 +108,12 @@ class Input extends Component {
             var sessionId = this.state.inputText.toLowerCase()
             if (!nameExists) {
               this.setState({
-                inputText: "",
                 alertMsg: "The room you are trying to join does not exist.",
                 alertShow: true
               })
+              this.btnSubmit.current.removeAttribute("disabled")
             }
             else {
-              //console.log("Joining Room")
-              this.btnSubmit.current.setAttribute("disabled", "disabled")
               // Nagivate to Room page
               this.setState({"redirect": sessionId})
             }

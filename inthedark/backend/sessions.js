@@ -181,16 +181,16 @@ exports._getSessionUserCount = (session_id, cb) => {
 }
 
 // Delete user
-exports.deleteUser = (user_id, cb) => {
-  query = `DELETE FROM users WHERE user_id=${user_id}`
+exports.deleteUser = (user_alias, room, cb) => {
+  query = `DELETE FROM users WHERE user_alias='${user_alias}' AND session_id='${room}'`
   db.query(query, (err, result) => {
     if (err) {
       console.log(err)
       if (cb) {cb(null)}
     }
     else {
-      console.log("Deleted user: ", user_id)
-      if (cb) {cb(user_id)}
+      console.log("Deleted user: ", user_alias)
+      if (cb) {cb(room)}
     }
   })
 }
@@ -210,6 +210,65 @@ exports.deleteSession = (session_id, cb) => {
   })
 }
 
-//BACKLOG
-// Remove all inactive users
-// Remove all inactive sessions
+// Delete all empty sessions
+exports.deleteEmptySessions = (cb) => {
+  query = `DELETE FROM sessions WHERE sessions.session_id NOT IN
+            (
+              SELECT temp_sessions.session_id FROM
+                (SELECT * FROM sessions) AS temp_sessions
+              JOIN users
+              WHERE temp_sessions.session_id = users.session_id
+            )`
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      if (cb) {cb(null)}
+    }
+    else {
+      console.log("Deleted all empty sessions")
+      if (cb) {cb(null)}
+    }
+  })
+}
+
+// Set a user alias for a user
+exports.createUserWithAlias = (req, res) => {
+  console.log("------------calling createUserWithAlias--------------------")
+  user_alias = req.body.user_alias
+  session_id = req.body.session_id
+
+  if(user_alias == undefined) {
+    console.log("user_alias ", user_alias, " is undefined.")
+    res.status(400).end()
+    return
+  }
+  var query = `SELECT COUNT(*) AS count FROM users JOIN sessions
+  ON users.session_id = sessions.session_id AND users.session_id = '${session_id}'
+  AND users.user_alias = '${user_alias}'`
+  console.log("Checking if user_alias ", user_alias, " is unique in session ", session_id)
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err)
+      res.status(500).end()
+    }
+    else {
+      if (result[0].count > 0) {
+        res.status(200).json({"success":false, "user_alias":null})
+      }
+      else {
+        query = `INSERT INTO users (user_alias, session_id)
+        VALUES ('${user_alias}','${session_id}')`
+        db.query(query, (err, result) => {
+          if (err) {
+            console.log(err)
+            res.status(500).end()
+          }
+          else{
+            console.log("Succesfully created user with alias ", user_alias)
+            res.status(200).json({"success":true, "user_alias":user_alias})
+          }
+        })
+      }
+    }
+  })
+}

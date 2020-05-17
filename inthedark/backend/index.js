@@ -5,6 +5,7 @@ var sessions = require('./sessions')
 var db = require('./db')
 var cors = require('cors')
 var socketIo = require('socket.io')
+var cron = require('node-cron')
 
 // Port
 const port = process.env.PORT || 8080
@@ -51,6 +52,11 @@ app.post('/user', sessions.createUser)
  * response: count
  */
 app.get('/user_count', sessions.getSessionUserCount)
+/*
+ * body: user_alias
+ * body: session_id
+ */
+app.put('/user_with_alias', sessions.createUserWithAlias)
 
 
 // Socket functions
@@ -96,7 +102,7 @@ io.on('connection', (socket) => {
     })
 
     // Delete the user from database and delete session if empty
-    sessions.deleteUser(user_id, () => {
+    sessions.deleteUser(user_alias, room, () => {
       sessions._getSessionUserCount(room, (count) => {
         if (count == 0) {
           sessions.deleteSession(session_id)
@@ -106,7 +112,10 @@ io.on('connection', (socket) => {
   })
 })
 
-
+cron.schedule('0 0 0-23 * * *', () => {
+  // Scouts for empty sessions and deletes them every day
+  sessions.deleteEmptySessions()
+});
 
 
 

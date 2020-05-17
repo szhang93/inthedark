@@ -68,11 +68,10 @@ class SetAlias extends Component {
   submitClicked() {
     var nickName = this.inputBox.current.value.toLowerCase()
     if (nickName.length > 0) {
-      //console.log("Attemping to set alias as: ", nickName)
+      console.log("Attemping to set alias as: ", nickName)
       //console.log(API_URL + "/user_alias")
-      axios.put(API_URL + "/user_alias", {
+      axios.put(API_URL + "/user_with_alias", {
         session_id: this.props.roomName,
-        user_id: this.props.userId,
         user_alias: nickName
       })
       .then((res) => {
@@ -157,36 +156,11 @@ class Room extends Component {
           this.setState({redirect: "/", loading: false})
         }
         else {
-          // otherwise, create user.
-          // setTimeout is used here to apply the initial fade in transition
           this.setState({loading: false})
           setTimeout(()=>{
             this.chat.current.className += " loaded"
             this.roomNameTitle.current.className += " loaded"
           }, 0)
-          // Generate user
-          //console.log(API_URL + `/user?session_id=${this.props.match.params.session}`)
-          axios.post(API_URL + `/user?session_id=${this.props.match.params.session.toLowerCase()}`)
-            .then((res) => {
-              if (res.status != 200) {
-                console.log("Response status not 200.")
-                return
-              }
-              else {
-                var success = res.data.success
-                var userId = res.data.user_id
-                if (!success) {
-                  console.log("Post request for creating user returned unsuccesful")
-                }
-                else {
-                  this.setState({userId: userId})
-                  //console.log("returned user id: ", userId)
-                }
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-            })
         }
       }
     })

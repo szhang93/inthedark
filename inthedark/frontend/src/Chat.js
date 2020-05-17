@@ -80,7 +80,7 @@ class Chat extends Component {
     this.updateUserCount = this.updateUserCount.bind(this)
 
     this.sock = io(API_URL, {
-      reconnect: true,
+      reconnect: false,
       query: `user_id=${this.props.userId}&user_alias=${this.props.userAlias}&room=${this.props.roomName}`
     }).connect()
 
