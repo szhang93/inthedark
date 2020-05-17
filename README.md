@@ -1,7 +1,6 @@
 # inthedark
 -------------------------------
-https://itdark.s3-us-west-1.amazonaws.com/flaming_escalating_birdhouse
-
+https://itdark.s3-us-west-1.amazonaws.com/
 Current bugs:
 --------------------
 * May be buggy for mobile users 
