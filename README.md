@@ -9,9 +9,9 @@ Current bugs:
 Current features:
 --------------------
 * Create a temporary chat room!
-* Stores only the most recent 50? messages on your browser.
-* Users can join by URL-link / chat room name.
+* Users can join via url/chat_room_name.
 * Chat rooms auto delete once the last user leaves. If for some reason this slips through, chat rooms are deleted on an hourly basis.
+* Stores only the most recent 50? messages on your browser.
 * Features random name generation
 * 4 emojis available atm
 
