@@ -13,6 +13,7 @@ Current features:
 * Users can join by URL-link / chat room name.
 * Chat rooms auto delete once the last user leaves. If for some reason this slips through, chat rooms are deleted on an hourly basis.
 * Features random name generation
+* 4 emojis available atm
 
 ![alt text](/inthedark/screenshots/1.png?raw=true)
 
