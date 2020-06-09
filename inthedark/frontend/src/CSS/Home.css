@@ -55,6 +55,13 @@
   opacity: 1;
   margin: auto;
 }
+@media (max-width: 600px) {
+   .InputBox {
+     width: 90%;
+     opacity: 1;
+     margin: auto;
+   }
+}
 
 .rowGap {
   height:4vh;

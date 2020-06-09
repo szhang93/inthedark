@@ -122,7 +122,7 @@ io.on('connection', (socket) => {
 })
 
 cron.schedule('0 0 0-23 * * *', () => {
-  // Scouts for empty sessions and deletes them every day
+  // Scouts for empty sessions and deletes them every hour
   sessions.deleteEmptySessions()
 });
 
