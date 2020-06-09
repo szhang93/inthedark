@@ -155,7 +155,7 @@ class SetAlias extends Component {
               onChange={this.inputChanged}
             />
             <InputGroup.Append>
-              <Button variant="dark-outline"
+              <Button variant="outline-dark"
               ref={this.randomButton}
               onClick={this.randomName}
               >{"Random"}</Button>

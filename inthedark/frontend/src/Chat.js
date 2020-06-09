@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import axios from "axios";
 import {API_URL} from './utils/API'
 import BubbleList from './utils/BubbleList'
+import Parser from './utils/ParseMessage'
+import {emojis} from './utils/ParseMessage'
 // CSS, BOOTSTRAP and ADDONS
 import './CSS/Chat.css';
 
@@ -69,10 +71,12 @@ class Chat extends Component {
     this.state = {
       bubbles: new BubbleList(),
       users: 0,
-      myColor: '#f54242'
+      myColor: '#f54242',
+      showEmojis: false
     }
     this.inputBox = React.createRef()
     this.sendButton = React.createRef()
+    this.emojiButton = React.createRef()
     this.chatEnd = React.createRef()
     this.sendMessage = this.sendMessage.bind(this)
     this.postMessage = this.postMessage.bind(this)
@@ -80,8 +84,9 @@ class Chat extends Component {
     this.checkEnter = this.checkEnter.bind(this)
     this.inputChanged = this.inputChanged.bind(this)
     this.updateUserCount = this.updateUserCount.bind(this)
-
-    this.date = new Date()
+    this.emojiPopup = this.emojiPopup.bind(this)
+    this.emojiList = this.emojiList.bind(this)
+    this.emojiSelect = this.emojiSelect.bind(this)
 
     this.sock = io(API_URL, {
       reconnect: false,
@@ -154,9 +159,31 @@ class Chat extends Component {
       this.inputBox.current.value = e.target.value.substring(0,maxMessageLen)
     }
   }
+  emojiPopup () {
+    this.setState({showEmojis: !this.state.showEmojis})
+  }
+  emojiSelect (key) {
+    console.log(key)
+    var emojiText = ' '.concat(key).concat(' ')
+    this.inputBox.current.value = this.inputBox.current.value.concat(emojiText)
+  }
+  emojiList () {
+    var keyList = Object.keys(emojis)
+    var list = keyList.map((key) => {
+      return(
+        <img src={emojis[key]}
+          key={key}
+          onClick={()=>{this.emojiSelect(key)}}
+          className="circleImg"
+          width="70vh"
+          height="70vh"></img>)
+    })
+    return list
+  }
 
   getCurrentTime (miliseconds) {
-    var currentTime = new Date(miliseconds + this.date.getTimezoneOffset())
+    var date = new Date()
+    var currentTime = new Date(miliseconds + date.getTimezoneOffset())
     return(
     `${currentTime.getHours()}:${currentTime.getMinutes()}
     ${currentTime.getMonth()+1}/${currentTime.getDate()+1}/${currentTime.getYear()-100}
@@ -164,7 +191,7 @@ class Chat extends Component {
   }
   sendMessage () {
 
-
+    var date = new Date()
     if (!this.inputBox.current.value) {return}
     const bubble = {
       user_id: this.props.userId,
@@ -172,7 +199,7 @@ class Chat extends Component {
       message: this.inputBox.current.value,
       color: this.state.myColor,
       room: this.props.roomName,
-      time_stamp: this.date.getTime()
+      time_stamp: date.getTime()
     }
     this.sock.emit("bubble", bubble)
     this.inputBox.current.value = ""
@@ -186,13 +213,15 @@ class Chat extends Component {
     const prevBubble = this.state.bubbles.getTail
     // We omit the timestamp and userAlias display if it's from the same user
     // AND if the message was sent less than 5 minutes apart
+
     var showTimeStamp = true
     if (prevBubble && prevBubble.element.props.userAlias == userAlias &&
-        (prevBubble.element.props.timeStampMilliseconds - timeStamp) < 300000) {
+        (timeStamp - prevBubble.element.props.timeStampMilliseconds) < 300000) {
+
       showTimeStamp = false
     }
     const newBubble = <Bubble userAlias={userAlias}
-                      text={message}
+                      text={Parser.parse(message)}
                       timeStamp={this.getCurrentTime(timeStamp)}
                       timeStampMilliseconds={timeStamp}
                       color={color}
@@ -231,10 +260,23 @@ class Chat extends Component {
             {this.bubbleList()}
             <div className = "chatEnd" ref={this.chatEnd}></div>
           </div>
+          {this.state.showEmojis?
+          <div className="emojiArea">
+            {this.emojiList()}
+          </div>
+          :<></>}
         </Row>
         <Row className="justify-content-md-center" md="auto">
           <Col className="textArea">
             <InputGroup>
+              <InputGroup.Append>
+              <Button variant="outline-dark"
+                size="lg"
+                ref={this.emojiButton}
+                onClick={this.emojiPopup}>
+                emoji
+              </Button>
+              </InputGroup.Append>
               <FormControl size="lg"
                 ref={this.inputBox}
                 onKeyPress={this.checkEnter}
