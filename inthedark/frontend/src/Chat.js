@@ -184,8 +184,21 @@ class Chat extends Component {
   getCurrentTime (miliseconds) {
     var date = new Date()
     var currentTime = new Date(miliseconds + date.getTimezoneOffset())
+
+    var time = ''
+    var currentHour = currentTime.getHours()
+    var currentMinute = currentTime.getMinutes()
+    if (currentHour < 10) {
+      time = time.concat('0')
+    }
+    time = time.concat(currentHour).concat(':')
+    if (currentMinute < 10) {
+      time = time.concat('0')
+    }
+    time = time.concat(currentMinute)
+
     return(
-    `${currentTime.getHours()}:${currentTime.getMinutes()}
+    `${time}
     ${currentTime.getMonth()+1}/${currentTime.getDate()+1}/${currentTime.getYear()-100}
     `)
   }

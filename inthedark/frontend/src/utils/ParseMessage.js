@@ -43,7 +43,6 @@ class Parser {
     for(var i=0; i<messageArray.length; i++) {
       var word = messageArray[i]
       if (Parser.isLink(word)) {
-        console.log(word, 'isLink')
         text.push(<LinkPreview word={word} key={i}/>)
         text.push(' ')
       }
@@ -52,14 +51,12 @@ class Parser {
       }
       else {
         // Plain text
-        console.log(word, 'plainText')
         if (i != messageArray.length - 1) {
           word = word.concat(' ')
         }
         text.push(word)
       }
     }
-    console.log(text)
     return text
   }
 }
