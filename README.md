@@ -20,6 +20,6 @@ Current features:
 
 ![alt text](/inthedark/screenshots/2.png?raw=true)
 
-Frontend: create-a-react-app
-Backend: Node.js, mySql
-Hosting: Heroku for backend API, aws s3 for frontend
+* Frontend: React
+* Backend: Node.js, mySql
+* Hosting: Heroku, aws s3, aws rds 
