@@ -1,6 +1,6 @@
 # inthedark
 -------------------------------
-https://itdark.s3-us-west-1.amazonaws.com/index.html
+http://itdark.s3-website-us-west-1.amazonaws.com/
 
 Current bugs:
 --------------------
