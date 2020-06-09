@@ -17,7 +17,7 @@ Current features:
 ![alt text](/inthedark/screenshots/1.png?raw=true)
 
 
-![alt text](/inthedark/screenshots/2.png?raw=true)
+![alt text](/inthedark/screenshots/2_new.png?raw=true)
 
 Frontend: create-a-react-app
 Backend: Node.js, mySql
