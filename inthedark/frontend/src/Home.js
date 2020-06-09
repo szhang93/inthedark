@@ -48,8 +48,20 @@ class Input extends Component {
   }
   // Returns whether string is alphanumeric
   isInputValid(string) {
-    var pattern = /^(\d*\w*-*_*)+$/i
-    return (pattern.test(string))
+    // REGEX is too slow
+    // var pattern = /^(\d*\w*-*_*)+$/i
+    // return (pattern.test(string))
+    for (var i=0; i<string.length; i++) {
+      if (!(string[i] == '_' ||
+            string[i] == '-' ||
+            string[i] >= '0' && string[i] <= '9' ||
+            string[i] >= 'a' && string[i] <= 'z' ||
+            string[i] >= 'A' && string[i] <= 'Z'
+        )) {
+          return false
+        }
+    }
+    return true
   }
   submitClicked() {
     if(this.state.inputText.length == 0){
@@ -128,6 +140,7 @@ class Input extends Component {
   }
   // When input is changed, checks whether input is valid. Otherwise, show alert.
   inputChanged(e) {
+    console.log("inputChange")
     if (e.target.value.length > maxNameLen) {
       this.inputBox.current.value = e.target.value.substring(0,maxNameLen)
     }
@@ -144,6 +157,7 @@ class Input extends Component {
         No spaces or special characters are allowed.",
         alertShow: true
       })
+
     }
   }
   randomName() {
@@ -194,9 +208,10 @@ class Input extends Component {
     return(
       <>
         <div>
-        <Alert variant="danger" show={this.state.alertShow}>
+        {this.state.alertShow?
+        <Alert variant="danger" >
           {this.state.alertMsg}
-        </Alert>
+        </Alert>:<></>}
         </div>
         <div>
           <InputGroup>
@@ -212,7 +227,7 @@ class Input extends Component {
                 <Button variant="outline-dark"
                 onClick={this.randomName}
                 ref={this.randomButton}
-                >{'Random'}</Button>
+                >{"Random"}</Button>
               </InputGroup.Append>
             :<></>}
             <InputGroup.Append>
@@ -234,7 +249,7 @@ class JoinChatButtons extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      btnPressed: btnState.NONE
+      btnPressed: btnState.NONE,
     }
     this.btnPress = this.btnPress.bind(this)
     this.inputBox = React.createRef()
@@ -295,6 +310,10 @@ class Home extends Component {
     super(props)
     this.title = React.createRef();
     this.joinButtons = React.createRef();
+    this.state = {
+      warningMessage: `Currently, the server sleeps when no users are making requests. You might have to
+      wait 5-10 seconds for it to wake up.`
+    }
   }
   componentDidMount() {
     // setTimeout is used here to apply the initial fade in transition
@@ -316,6 +335,7 @@ class Home extends Component {
               </div>
             </Col>
           </Row>
+
           <Row className="justify-content-md-center">
             <Col>
               <div
@@ -331,6 +351,14 @@ class Home extends Component {
               </div>
             </Col>
           </Row>
+          {this.state.warningMessage.length > 0?
+          <Row className="justify-content-md-center">
+            <Col>
+              <Alert variant={'warning'}>
+                {this.state.warningMessage}
+              </Alert>
+            </Col>
+          </Row>:<></>}
         </Container>
       </div>
     );

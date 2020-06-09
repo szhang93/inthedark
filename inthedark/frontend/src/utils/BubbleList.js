@@ -21,6 +21,10 @@ class BubbleList {
     return this.head
   }
 
+  get getTail() {
+    return this.tail 
+  }
+
   get getSize() {
     return this.size
   }

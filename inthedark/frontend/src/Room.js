@@ -44,8 +44,20 @@ class SetAlias extends Component {
   }
   // Returns whether string is alphanumeric
   isInputValid(string) {
-    var pattern = /^(\d*\w*-*_* *)+$/i
-    return (pattern.test(string))
+    // REGEX is too slow
+    // var pattern = /^(\d*\w*-*_*)+$/i
+    // return (pattern.test(string))
+    for (var i=0; i<string.length; i++) {
+      if (!(string[i] == '_' ||
+            string[i] == '-' ||
+            string[i] >= '0' && string[i] <= '9' ||
+            string[i] >= 'a' && string[i] <= 'z' ||
+            string[i] >= 'A' && string[i] <= 'Z'
+        )) {
+          return false
+        }
+    }
+    return true
   }
   // When input is changed, checks whether input is valid. Otherwise, show alert.
   inputChanged(e) {

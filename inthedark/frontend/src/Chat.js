@@ -45,14 +45,16 @@ class Bubble extends Component {
     return (
       <>
         <div className = "bubbleBundle">
+          {this.props.showTimeStamp?
           <div>
             <div className = "userAlias">
               {this.props.userAlias}
             </div>
+
             <div className = "timeStamp" >
               {this.props.timeStamp}
             </div>
-          </div>
+          </div>:<></>}
           <div className = "bubble" style={{color: this.props.color}}>
             {this.props.text}
           </div>
@@ -79,6 +81,8 @@ class Chat extends Component {
     this.inputChanged = this.inputChanged.bind(this)
     this.updateUserCount = this.updateUserCount.bind(this)
 
+    this.date = new Date()
+
     this.sock = io(API_URL, {
       reconnect: false,
       query: `user_id=${this.props.userId}&user_alias=${this.props.userAlias}&room=${this.props.roomName}`
@@ -95,7 +99,7 @@ class Chat extends Component {
         this.postSystemMessage(msg.message)
       }
       else if (msg.type == msgCode.MESSAGE) {
-        this.postMessage(msg.user_alias, msg.message, msg.timeStamp, msg.color)
+        this.postMessage(msg.user_alias, msg.message, msg.time_stamp, msg.color)
       }
     })
 
@@ -124,13 +128,16 @@ class Chat extends Component {
     }
     var messages = []
     var node = this.state.bubbles.getHead
+    var prev = null
     //console.log(this.state.bubbles)
     while(node) {
+
       messages.push(
         <li key={node.key} style={{"listStyleType": "none"}}>
           {node.element}
         </li>
       )
+      prev = node
       node = node.next
     }
     return(
@@ -147,14 +154,25 @@ class Chat extends Component {
       this.inputBox.current.value = e.target.value.substring(0,maxMessageLen)
     }
   }
+
+  getCurrentTime (miliseconds) {
+    var currentTime = new Date(miliseconds + this.date.getTimezoneOffset())
+    return(
+    `${currentTime.getHours()}:${currentTime.getMinutes()}
+    ${currentTime.getMonth()+1}/${currentTime.getDate()+1}/${currentTime.getYear()-100}
+    `)
+  }
   sendMessage () {
+
+
     if (!this.inputBox.current.value) {return}
     const bubble = {
       user_id: this.props.userId,
       user_alias: this.props.userAlias,
       message: this.inputBox.current.value,
       color: this.state.myColor,
-      room: this.props.roomName
+      room: this.props.roomName,
+      time_stamp: this.date.getTime()
     }
     this.sock.emit("bubble", bubble)
     this.inputBox.current.value = ""
@@ -165,10 +183,20 @@ class Chat extends Component {
       this.state.bubbles.deleteFront()
     }
     //console.log(message)
+    const prevBubble = this.state.bubbles.getTail
+    // We omit the timestamp and userAlias display if it's from the same user
+    // AND if the message was sent less than 5 minutes apart
+    var showTimeStamp = true
+    if (prevBubble && prevBubble.element.props.userAlias == userAlias &&
+        (prevBubble.element.props.timeStampMilliseconds - timeStamp) < 300000) {
+      showTimeStamp = false
+    }
     const newBubble = <Bubble userAlias={userAlias}
                       text={message}
-                      timeStamp={timeStamp}
-                      color={color}/>
+                      timeStamp={this.getCurrentTime(timeStamp)}
+                      timeStampMilliseconds={timeStamp}
+                      color={color}
+                      showTimeStamp={showTimeStamp}/>
 
     // Push new bubble onto bubbles
     this.state.bubbles.push(newBubble)

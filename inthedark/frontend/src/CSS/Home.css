@@ -18,6 +18,9 @@
 .bottomMargin {
   margin-bottom: 2vh;
 }
+.topMargin {
+  margin-top: 2vh;
+}
 .JoinChatButtons {
   opacity: 0;
   transform: translate(0,-2em);
